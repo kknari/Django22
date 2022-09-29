@@ -18,5 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [ #ip주소/
     path('admin/', admin.site.urls), #IP주소/admin/ 주소로 갔을 때 처리해 줄 수 있는 것을 보여 줌
-    path('blog/', include('blog.urls')) #IP주소/blog 이런 형태의 url
+    path('blog/', include('blog.urls')), #IP주소/blog 이런 형태의 url
+    path('', include('single_pages.urls')) #ip주소/
 ]
