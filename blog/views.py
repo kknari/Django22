@@ -3,15 +3,18 @@ from .models import Post
 from django.views.generic import ListView, DetailView
 
 # Create your views here.
+#view에서 사용자 요구 처리
 
 class PostList(ListView):
     model = Post
     ordering = '-pk' #데이터 많이 들어가서 정렬 필요 밑에 상세페이지는 정렬 필요 x
     #템플릿은 모델명_list.html: post_list.html
+    #매개변수 모델명_list : post_list 라고 하는 것이 전달됨
 
 class PostDetail(DetailView):
     model = Post
     # 템플릿은 모델명_detail.html: post_detail.html
+    #매개변수 모델명 : post 라는 것을 통해 전달해 줌
 
 
 # def index(request):
