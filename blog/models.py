@@ -1,8 +1,11 @@
+import os.path
+
 from django.db import models
 
 # Create your models here.
 class Post(models.Model): #class의 이름이 table 이름
     title = models.CharField(max_length=30) #제목
+    hook_text = models.CharField(max_length=100, blank=True) #글자 수 제한 있음 / content 내용 일부 미리 보기
     content = models.TextField() #작성 내용(제한 없음)
 
     head_image = models.ImageField(upload_to='blog/images/%Y/%m/%d/', blank=True) # 연도/월/일 %Y=2022 %y=22로 표현
@@ -18,3 +21,9 @@ class Post(models.Model): #class의 이름이 table 이름
 
     def get_absolute_url(self):
         return f'/blog/{self.pk}/'
+
+    def get_file_name(self):
+        return os.path.basename(self.file_upload.name)
+
+    def get_file_ext(self):
+        return self.get_file_name().split('.')[-1] #a.txt -> a txt (-1은 의미적으로 가장 마지막을 가리킴)
