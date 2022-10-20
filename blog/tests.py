@@ -1,12 +1,15 @@
 from django.test import TestCase, Client
 from bs4 import BeautifulSoup
 from .models import Post
+from django.contrib.auth.models import User
 
 # Create your tests here.
 class TestView(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user_kim = User.objects.create_user(username="kim", password="somepassword")
+        self.user_lee = User.objects.create_user(username="lee", password="somepassword")
 
 
     def test_post_list(self):
@@ -33,8 +36,8 @@ class TestView(TestCase):
         self.assertIn('아직 게시물이 없습니다', main_area.text)
 
         # 2. post가 추가
-        post_001 = Post.objects.create(title="첫 번째 포스트", content="첫 번째 포스트입니다.")
-        post_002 = Post.objects.create(title="두 번째 포스트", content="두 번째 포스트입니다.")
+        post_001 = Post.objects.create(title="첫 번째 포스트", content="첫 번째 포스트입니다.", author=self.user_kim)
+        post_002 = Post.objects.create(title="두 번째 포스트", content="두 번째 포스트입니다.", author=self.user_lee)
         self.assertEqual(Post.objects.count(), 2)
 
         response = self.client.get('/blog/')
@@ -45,9 +48,12 @@ class TestView(TestCase):
         self.assertIn(post_002.title, main_area.text)
         self.assertNotIn('아직 게시물이 없습니다', main_area.text)
 
+        self.assertIn(post_001.author.username.upper(), main_area.text)
+        self.assertIn(post_002.author.username.upper(), main_area.text)
+
     def test_post_detail(self):
         # 특정 포스트가 있어야 함
-        post_001 = Post.objects.create(title="첫 번째 포스트", content="첫 번째 포스트입니다.")
+        post_001 = Post.objects.create(title="첫 번째 포스트", content="첫 번째 포스트입니다.", author=self.user_kim)
         self.assertEqual(post_001.get_absolute_url(), '/blog/1/')
 
         response = self.client.get(post_001.get_absolute_url(), follow=True) # '/blog/1/'
@@ -60,7 +66,9 @@ class TestView(TestCase):
         self.assertIn('About me', navbar.text)
 
         self.assertIn(post_001.title, soup.title.text)
+
         main_area = soup.find('div', id='main-area')
         post_area = main_area.find('div', id='post-area')
         self.assertIn(post_001.title, post_area.text)
         self.assertIn(post_001.content, post_area.text)
+        self.assertIn(post_001.author.username.upper(), post_area.text)

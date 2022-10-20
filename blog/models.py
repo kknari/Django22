@@ -1,6 +1,7 @@
 import os.path
 
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Post(models.Model): #class의 이름이 table 이름
@@ -14,10 +15,12 @@ class Post(models.Model): #class의 이름이 table 이름
 
     created_at = models.DateTimeField(auto_now_add=True) #작성 시간
     updated_at = models.DateTimeField(auto_now=True)
+
     #추후 author 작성
+    author = models.ForeignKey(User, null=True, on_delete=models.SET_NULL) # 탈퇴하면 내용 같이 사라짐 models.CASCADE
 
     def __str__(self):
-        return f'[{self.pk}]{self.title}    {self.created_at}'
+        return f'[{self.pk}]{self.title}:{self.author}  :  {self.created_at}'
 
     def get_absolute_url(self):
         return f'/blog/{self.pk}/'
