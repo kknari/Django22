@@ -1,16 +1,28 @@
+<!--바탕이 될 템플릿 파일-->
 {% extends 'blog/base.html' %}
 
+<!--base.html을 바탕으로 활용할 html 템플릿에서 이 부분 정의해 채워 넣기 가능(main)-->
 {% block main_area %}
+        <h2>Blog
+            {% if category %}
+            - <span class="badge badge-secondary>{{category}}</span>
+            {% endif%}
+        </h2>
         {% if post_list.exists %}
 <!--          post_list 데이터가 있는 경우만 for문 실행-->
         {% for p in post_list %}
-        <div class="card mb-4">
+        <div class="card mb-4" id="post-{{p.pk}}">
           {% if p.head_image %}
           <img class="card-img-top" src="{{p.head_image.url}}" alt="{{p}}의 head_image" />
           {% else %}
           <img class="card-img-top" src="https://picsum.photos/seed/{{p.pk}}/800/200" alt="random image" />
           {% endif %}
           <div class="card-body">
+              {% if p.category %}
+                <span class="badge badge-secondary float-right"><a href="{{p.category.get_absolute.url}}">{{p.category}}</span>
+              {% else %}
+                <span class="badge badge-secondary float-right"><a href="/blog/category/no_category">미분류</span>
+              {% endif %}
               <h2 class="card-title">{{p.title | upper}}</h2>
               {% if p.hook_text %}
                   <h5 class="text-muted">{{p.hook_text}}</h5>
