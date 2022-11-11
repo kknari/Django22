@@ -5,8 +5,14 @@
 {% block main_area %}
         <h2>Blog
             {% if category %}
-            - <span class="badge badge-secondary>{{category}}</span>
+            - <span class="badge badge-secondary">{{category}}</span>
             {% endif%}
+            {% if tag %}
+            <i class="fas fa-tag"></i>
+            - <span class="badge badge-secondary">
+                {{tag}} ({{tag.post_set.count}})
+            </span>
+            {% endif %}
         </h2>
         {% if post_list.exists %}
 <!--          post_list 데이터가 있는 경우만 for문 실행-->
@@ -19,15 +25,28 @@
           {% endif %}
           <div class="card-body">
               {% if p.category %}
-                <span class="badge badge-secondary float-right"><a href="{{p.category.get_absolute.url}}">{{p.category}}</span>
+                <span class="badge badge-secondary float-right"><a href="{{p.category.get_absolute_url}}">{{p.category}}</a></span>
               {% else %}
-                <span class="badge badge-secondary float-right"><a href="/blog/category/no_category">미분류</span>
+                <span class="badge badge-secondary float-right"><a href="/blog/category/no_category">미분류</a></span>
               {% endif %}
               <h2 class="card-title">{{p.title | upper}}</h2>
               {% if p.hook_text %}
                   <h5 class="text-muted">{{p.hook_text}}</h5>
               {% endif %}
               <p class="card-text">{{p.content | truncatechars:100}}</p>
+              {% if p.tags.exists %}
+                <i class="fas fa-tag"></i>
+<!--              값이 존재하는가?-->
+                {% for t in p.tags.iterator %}
+<!--              여러 개 있는 거 전부 출력-->
+              <span class="badge badge-pill badge-light">
+                  <a href="{{t.get_absolute.url}}">
+                  {{t}}
+                  </a>
+              </span>
+                {% endfor %}
+              {% endif %}
+              <br><br>
               <a class="btn btn-primary" href="{{p.get_absolute_url}}">Read more →</a>
           </div>
           <div class="card-footer">

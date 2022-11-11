@@ -4,6 +4,14 @@ from django.db import models
 from django.contrib.auth.models import User # 다대일 관계
 
 # Create your models here.
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
+
+    def __str__(self):
+        return self.name
+    def get_absolute_url(self):
+        return f'/blog/tag/{self.slug}/'
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
@@ -39,6 +47,7 @@ class Post(models.Model): #class의 이름이 table 이름
 
     # null, blank 공란 허용
     category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+    tags = models.ManyToManyField(Tag, blank=True) # 필드에 null은 true 이미 포함 on_delete도 이미 포함
 
     def __str__(self):
         return f'[{self.pk}]{self.title}:{self.author}  :  {self.created_at}'
