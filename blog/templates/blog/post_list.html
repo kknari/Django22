@@ -3,6 +3,14 @@
 
 <!--base.html을 바탕으로 활용할 html 템플릿에서 이 부분 정의해 채워 넣기 가능(main)-->
 {% block main_area %}
+        {% if user.is_authenticated %}
+            {% if user.is_superuser or user.is_staff %}
+                <a class="btn btn-info btn-sm float-right" href="/blog/create_post/" role="button">
+                    <i class="fas fa-pen"></i>
+                    New Post
+                </a>
+            {% endif %}
+        {% endif %}
         <h2>Blog
             {% if category %}
             - <span class="badge badge-secondary">{{category}}</span>
