@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Category, Tag #외부파일 불러옴
+from .models import Post, Category, Tag, Comment #외부파일 불러옴
 
 # Register your models here.
 
@@ -17,3 +17,5 @@ class TagAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 admin.site.register(Tag, TagAdmin)
+
+admin.site.register(Comment)

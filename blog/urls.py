@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [ #IP주소/blog/
     path('', views.PostList.as_view()),
     path('<int:pk>/', views.PostDetail.as_view()),
+    path('<int:pk>/new_comment/', views.new_comment),
     path('category/<str:slug>/', views.category_page), # IP주소/blog/category/slug/
     path('tag/<str:slug>/', views.tag_page), # IP주소/blog/tag/slug/
     path('create_post/', views.PostCreate.as_view()),
