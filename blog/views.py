@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.core.exceptions import PermissionDenied
 from django.utils.text import slugify
+from django.db.models import Q
 
 # Create your views here.
 #view에서 사용자 요구 처리
@@ -89,7 +90,6 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
         return context
 
-
 class PostList(ListView):
     model = Post
     ordering = '-pk' #데이터 많이 들어가서 정렬 필요 밑에 상세페이지는 정렬 필요 x
@@ -102,6 +102,21 @@ class PostList(ListView):
         return context
     #템플릿은 모델명_list.html: post_list.html
     #매개변수 모델명_list : post_list 라고 하는 것이 전달됨
+
+class PostSearch(PostList):
+    paginate_by = None
+
+    def get_queryset(self):
+        q = self.kwargs['q']
+        post_list = Post.objects.filter(Q(title__contains=q) | Q(tags__name__contains=q)).distinct()
+        return post_list
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(PostSearch, self).get_context_data()
+        q = self.kwargs['q']
+        context['search_info'] = f'Search: {q} ({self.get_queryset().count()})'
+
+        return context
 
 class PostDetail(DetailView):
     model = Post
