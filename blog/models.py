@@ -61,6 +61,12 @@ class Post(models.Model): #class의 이름이 table 이름
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1] #a.txt -> a txt (-1은 의미적으로 가장 마지막을 가리킴)
 
+    def get_avatar_url(self):
+        if self.author.socialaccount_set.exists():
+            return self.author.socialaccount_set.first().get_avatar_url()
+        else:
+            return "https://dummyimage.com/50x50/ced4da/6c757d.jpg"
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
