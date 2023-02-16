@@ -8,6 +8,12 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import PermissionDenied
 from django.utils.text import slugify
 from django.db.models import Q
+from rest_framework import viewsets
+from .serializers import postSerializer
+
+class postViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = postSerializer
 
 # Create your views here.
 #view에서 사용자 요구 처리
@@ -149,6 +155,7 @@ def new_comment(request, pk):
         else:
             raise PermissionDenied
 
+
 class CommentUpdate(LoginRequiredMixin, UpdateView):
     model = Comment
     form_class = CommentForm
@@ -159,6 +166,15 @@ class CommentUpdate(LoginRequiredMixin, UpdateView):
         else:
             raise PermissionDenied
     # 템플릿 : comment_form
+
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    post = comment.post
+    if request.user.is_authenticated and request.user == comment.author:
+        comment.delete()
+        return redirect(post.get_absolute_url())
+    else:
+        raise PermissionDenied
 
 def category_page(request, slug):
     if slug == 'no_category':

@@ -17,12 +17,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers
+from blog import views
+
+router = routers.DefaultRouter()
+router.register(r'tests', views.postViewSet)
 
 urlpatterns = [ #ip주소/
     path('admin/', admin.site.urls), #IP주소/admin/ 주소로 갔을 때 처리해 줄 수 있는 것을 보여 줌
     path('blog/', include('blog.urls')), # IP주소/blog 이런 형태의 url
+    path('', include('single_pages.urls')), #ip주소/
     path('accounts/', include('allauth.urls')),
-    path('', include('single_pages.urls')) #ip주소/
+    path('drf/', include(router.urls))
 ] # 사용자가 사용하는 url, 뒤에가 url 처리해 주는 값
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
